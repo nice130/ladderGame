@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사다리타기</title>
+    <style>
+        #app{
+            text-align: center;
+        }
+        .lader_outer{
+            width: 500px;
+            height: 500px;
+            margin: auto;
+        }
+        .result{
+            bottom: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>사다리타기</h1>
+        <div id="participant"> 
+            <!-- 인원수 설정 -->
+            참가자 수 
+            <button onclick="participant(this)" value="minus">-</button>
+                <!-- 몇명변수추가 -->
+                <span id="participantNumber"></span>
+            <button onclick="participant(this)" value="plus">+</button>
+        </div>
+        <!-- 사다리게임판 -->
+        <div class="lader_outer">
+            <!-- 참가자 -->
+            <div id="1">
+                <td>참가자</td>
+            </div>
+            <!-- 당첨칸 -->
+            <div class="result" id="1">
+                <td>당첨</td>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let participantNumber = 2;
+        let $participant = document.getElementById("participantNumber")
+        $participant.innerText= participantNumber; //참가자 초기값 2
+        
+        const participant=(val)=>{
+            value=val.value;
+            $participant.getBoundingClientRect().bottom;
+            if(value=='minus'){
+                if(participantNumber =='2'){
+                    alert("참가자는2명이상이여야합니다");
+                    return;
+                }
+                participantNumber--;
+                $participant.innerText= participantNumber;
+            }else{
+                participantNumber++;
+                $participant.innerText= participantNumber;
+            }
+        }
+        
+
+        // let browserPoint = (event)=>{
+        //     console.log(`브라우저 좌표 : (${event.pageX}, ${event.pageY})`);
+        // }
+        // let clientPoint = (event) =>{
+        //     console.log(`화면 좌표 : (${event.clientX}, ${event.clientY})`);
+        // }
+        // window.addEventListener('click',e=>{
+        //     browserPoint(e);
+        //     clientPoint(e);
+        // });
+    </script>
+</body>
+</html>
