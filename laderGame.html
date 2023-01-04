@@ -30,8 +30,11 @@
                 <span id="participantNumber"></span>
             <button onclick="participant(this)" value="plus">+</button>
         </div>
+        <div>
+            <button onclick="start()">게임생성</button>
+        </div>
         <!-- 사다리게임판 -->
-        <div class="lader_outer">
+        <canvas class="lader_outer" id="lader_outer">
             <!-- 참가자 -->
             <div id="1">
                 <td>참가자</td>
@@ -40,7 +43,7 @@
             <div class="result" id="1">
                 <td>당첨</td>
             </div>
-        </div>
+        </canvas>
     </div>
 
     <script>
@@ -50,7 +53,13 @@
         $participant.innerText= participantNumber; //참가자 초기값 2
         console.log($div);
 
-        
+        const start = ()=>{
+            var lader_canvas = document.getElementById("lader_outer");
+            var ctx = lader_canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.moveTo(25,25);
+
+        }
         
         const participant=(val)=>{
             value=val.value;
