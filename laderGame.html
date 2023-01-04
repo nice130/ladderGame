@@ -46,7 +46,11 @@
     <script>
         let participantNumber = 2;
         let $participant = document.getElementById("participantNumber")
+        var $div = document.getElementById("1").getBoundingClientRect().bottom;
         $participant.innerText= participantNumber; //참가자 초기값 2
+        console.log($div);
+
+        
         
         const participant=(val)=>{
             value=val.value;
