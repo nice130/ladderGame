@@ -34,46 +34,75 @@
             <button onclick="start()">게임생성</button>
         </div>
         <!-- 사다리게임판 -->
-        <canvas class="lader_outer" id="lader_outer">
+        <div>
             <!-- 참가자 -->
             <div id="1">
                 <td>참가자</td>
             </div>
+            <canvas class="lader_outer" id="lader_outer">
+
+            </canvas>
             <!-- 당첨칸 -->
-            <div class="result" id="1">
+            <div class="result" id="2">
                 <td>당첨</td>
             </div>
-        </canvas>
+        </div>
     </div>
 
     <script>
-        let participantNumber = 2;
+        let line = 2;
         let $participant = document.getElementById("participantNumber")
         var $div = document.getElementById("1").getBoundingClientRect().bottom;
-        $participant.innerText= participantNumber; //참가자 초기값 2
+        var $res = document.getElementById("2").getBoundingClientRect().top;
+        $participant.innerText= line; //참가자 초기값 2
         console.log($div);
+        console.log($res);
 
         const start = ()=>{
             var lader_canvas = document.getElementById("lader_outer");
             var ctx = lader_canvas.getContext("2d");
             ctx.beginPath();
-            ctx.moveTo(25,25);
-
+            ctx.moveTo($div,0);
+            ctx.lineTo($div,$res);
+            ctx.stroke();
+            // const canvas = document.getElementById(_id);
+            // let ctx = canvas.getContext('2d');
+            // let width = canvas.width;
+            // let height = canvas.height;
+            // let defaultLineWidth = 3;
+            // let defaultLineColor = '#A6ABCA';
+            // for(let i=0; i<line; i++){
+            //     let startPosX = i / line * width +1/line*width/2
+            //     ctx.save();
+            //     ctx.beginPath();
+            //     // ctx.lineWidth = defaultLineWidth;
+            //     // ctx.strokeStyle = defaultLineColor;
+            //     ctx.moveTo(startPosX, height * 0.1);
+            //     ctx.lineTo(startPosX,height*0.9);
+            //     ctx.stroke();
+            //     ctx.closePath();
+            //     ctx.restore();
+            //     let arr = [
+            //         {x : startPosX, y : height * 0.1},
+            //         {x : startPosX, y : height * 0.9}
+            //     ]
+            //     data.push(arr);
+            // }
         }
         
         const participant=(val)=>{
             value=val.value;
             $participant.getBoundingClientRect().bottom;
             if(value=='minus'){
-                if(participantNumber =='2'){
+                if(line =='2'){
                     alert("참가자는2명이상이여야합니다");
                     return;
                 }
-                participantNumber--;
-                $participant.innerText= participantNumber;
+                line--;
+                $participant.innerText= line;
             }else{
-                participantNumber++;
-                $participant.innerText= participantNumber;
+                line++;
+                $participant.innerText= line;
             }
         }
         
