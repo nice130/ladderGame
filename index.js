@@ -4,7 +4,7 @@ function ladder(_id, option = {}){
     let width = canvas.width
     let height = canvas.height
      
-    let line = option.line || 6  //line
+    let line = option.line || 5  //line
 
     let calback //콜백용 변수 입니다
     let data = [ ] //모든 데이터가 y축 기준으로 정렬된 배열 입니다
@@ -40,7 +40,7 @@ function ladder(_id, option = {}){
             ctx.lineWidth = defaultLineWidth
             ctx.strokeStyle = defaultLineColor
             ctx.moveTo(startPosX, height * 0.1)
-            ctx.lineTo(startPosX, height * 0.9)
+            ctx.lineTo(startPosX, height * 0.9) 
             ctx.stroke()
             ctx.closePath()
             ctx.restore()  
@@ -306,9 +306,6 @@ document.getElementById('btn4').addEventListener('click', (event) =>{
 })  
 document.getElementById('btn5').addEventListener('click', (event) =>{
     lad.find(4, 'orange')
-})  
-document.getElementById('btn6').addEventListener('click', (event) =>{
-    lad.find(5, 'orange')
 })  
 lad.calback( (data, lineData)=>{
     console.log(data)
