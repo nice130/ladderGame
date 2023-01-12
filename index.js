@@ -1,10 +1,13 @@
+let Participation;
 function ladder(_id, option = {}){
+    const Participation = prompt('참가수를 입력하세요');
     const canvas = document.getElementById(_id)
+    const $game_range = document.getElementById('game_range');
     let ctx = canvas.getContext('2d')
     let width = canvas.width
     let height = canvas.height
      
-    let line = option.line || 5  //line
+    let line = option.line || Participation  //line
 
     let calback //콜백용 변수 입니다
     let data = [ ] //모든 데이터가 y축 기준으로 정렬된 배열 입니다
@@ -30,7 +33,14 @@ function ladder(_id, option = {}){
         ctx.clearRect(0,0,width,height)
         ctx.restore()   
     }
-
+    for(let i=0;i<Participation;i++){
+        let startPosX = i / line * width + 1/line * width / 2.6 
+        let num = i+1;
+        $game_range.innerHTML +='<button class="btn" type="button" style="left:'+startPosX+'px;" id="btn'+num+'">'+num+'번</button>';
+        $game_range.innerHTML +='<div class="prize" id="res_'+i+'" style="left:'+startPosX+'px; top:380px"><div>';
+    }
+    
+    
     //맨 처음 선을 그려줍니다
     function _drawLine(){
         for(let i = 0 ; i < line ; i++){
@@ -290,11 +300,15 @@ function ladder(_id, option = {}){
 
 let lad = ladder('canvas')
 
-
+// for(let i=0;i<Participation;i++){
+//     document.getElementById('btni').addEventListener('click', (event) =>{
+//         lad.find(i, 'red')
+//     })       
+// }
 
 document.getElementById('btn1').addEventListener('click', (event) =>{
     lad.find(0, 'red')
-})   
+})
 document.getElementById('btn2').addEventListener('click', (event) =>{
     lad.find(1, 'blue')
 })   
