@@ -1,6 +1,6 @@
 let Participation;
 function ladder(_id, option = {}){
-    const Participation = prompt('참가수를 입력하세요');
+    Participation = prompt('참가수를 입력하세요');
     const canvas = document.getElementById(_id)
     const $game_range = document.getElementById('game_range');
     let ctx = canvas.getContext('2d')
@@ -39,7 +39,13 @@ function ladder(_id, option = {}){
         $game_range.innerHTML +='<button class="btn" type="button" style="left:'+startPosX+'px;" id="btn'+num+'">'+num+'번</button>';
         $game_range.innerHTML +='<div class="prize" id="res_'+i+'" style="left:'+startPosX+'px; top:380px"><div>';
     }
+    for(let i=0;i<Participation;i++){
     
+        let id = 'btn' + (i+1);
+        document.getElementById(id).addEventListener('click', (event) =>{
+            lad.find(i, 'red')
+        })       
+    }
     
     //맨 처음 선을 그려줍니다
     function _drawLine(){
@@ -235,7 +241,8 @@ function ladder(_id, option = {}){
     let historyIndex = []  //히스토리 배열입니다. 이미 지나온 구간은 안가기 위해서 사용 합니다
 
     function gotoDestination(iiddxx, color){
-        let mainCursor = iiddxx || 0
+        
+        let mainCursor = iiddxx || 0 //몇번째 사다리인지 확인
         let innerCursor = 0
         let stop = true
         historyIndex = []
@@ -247,6 +254,7 @@ function ladder(_id, option = {}){
             if(bk >= 1433) {  //혹시모를 무한재귀 대비 브레이킹 구간 입니다
                 stop = false
             }
+            
             let start = data[mainCursor][innerCursor]
             let end
             if(start.linkIdx != null && historyIndex.filter( arg=> arg == start.linkIdx) == 0){ //링크가 있는 지점
@@ -257,6 +265,7 @@ function ladder(_id, option = {}){
                 innerCursor = search.innIdx
                 historyIndex.push(start.linkIdx)
             } else if(data[mainCursor].length <= innerCursor){ //끝지점
+                debugger;
                 stop = false
             } else { //링크가 없는지점
                 end = data[mainCursor][innerCursor+1]
@@ -300,28 +309,24 @@ function ladder(_id, option = {}){
 
 let lad = ladder('canvas')
 
-// for(let i=0;i<Participation;i++){
-//     document.getElementById('btni').addEventListener('click', (event) =>{
-//         lad.find(i, 'red')
-//     })       
-// }
 
-document.getElementById('btn1').addEventListener('click', (event) =>{
-    lad.find(0, 'red')
-})
-document.getElementById('btn2').addEventListener('click', (event) =>{
-    lad.find(1, 'blue')
-})   
-document.getElementById('btn3').addEventListener('click', (event) =>{
-    lad.find(2, 'green')
-})  
-document.getElementById('btn4').addEventListener('click', (event) =>{
-    lad.find(3, 'purple')
-})  
-document.getElementById('btn5').addEventListener('click', (event) =>{
-    lad.find(4, 'orange')
-})  
-lad.calback( (data, lineData)=>{
-    console.log(data)
-    console.log(lineData)
-})
+
+// document.getElementById('btn1').addEventListener('click', (event) =>{
+//     lad.find(0, 'red')
+// })
+// document.getElementById('btn2').addEventListener('click', (event) =>{
+//     lad.find(1, 'blue')
+// })   
+// document.getElementById('btn3').addEventListener('click', (event) =>{
+//     lad.find(2, 'green')
+// })  
+// document.getElementById('btn4').addEventListener('click', (event) =>{
+//     lad.find(3, 'purple')
+// })  
+// document.getElementById('btn5').addEventListener('click', (event) =>{
+//     lad.find(4, 'orange')
+// })  
+// lad.calback( (data, lineData)=>{
+//     console.log(data)
+//     console.log(lineData)
+// })
