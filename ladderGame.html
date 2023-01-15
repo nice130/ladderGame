@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사다리타기</title>
+    <style>
+        @import url("ladderStyle.css");
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>사다리타기</h1>
+        <div id="participant"> 
+            <!-- 인원수 설정 -->
+            참가자 수 
+            <button onclick="participant(this)" value="minus">-</button>
+                <!-- 몇명변수추가 -->
+                <span id="participantNumber"></span>
+            <button onclick="participant(this)" value="plus">+</button>
+        </div>
+        <div>
+            <button onclick="start()">게임생성</button>
+        </div>
+        <!-- 사다리게임판 -->
+        <div>
+            <div id="game_field">
+                <!-- 참가자/당첨 생성 -->
+            </div>
+            <canvas class="canvas" id="canvas">
+            </canvas>
+        </div>
+    </div>
+
+    <script>
+        var canvas = document.getElementById("canvas"); 
+        var ctx = canvas.getContext("2d");
+        let width = canvas.width
+        let height = canvas.height
+        let participantion = 2; //기본 참여인원 
+        let $game_field = document.getElementById("participantNumber")
+        $game_field.innerText= participantion;
+        let option = {};
+        let line = option.line || participantion  //line ;
+
+        const start = ()=>{
+            console.log(width);
+            console.log(height);
+            for(let i=0;i<participantion;i++){
+                let coordinatesX = i / line * width + 1/line * width / 2.6 
+                let num = i+1;
+                $game_field.innerHTML +='<button class="btn" type="button" style="left:'+coordinatesX+'px;" id="btn'+num+'">'+num+'번</button>';
+                $game_field.innerHTML +='<div class="prize" id="res_'+i+'" style="left:'+coordinatesX+'px; top:380px"><div>';
+            }
+            for(let i=0;i<participantion;i++){
+                let id = 'btn' + (i+1);
+                document.getElementById(id).addEventListener('click', (event) =>{
+                    lad.find(i, 'red')
+                });
+            }
+
+            function _drawLine(){
+                for(let i = 0 ; i < line ; i++){
+                    let coordinatesX = i / line * width + 1/line * width / 2
+                    ctx.save()
+                    ctx.beginPath()
+                    ctx.lineWidth = defaultLineWidth
+                    ctx.strokeStyle = defaultLineColor
+                    ctx.moveTo(coordinatesX, height * 0.1)
+                    ctx.lineTo(coordinatesX, height * 0.9) 
+                    ctx.stroke()
+                    ctx.closePath()
+                    ctx.restore()  
+                    let arr = [
+                        {x : coordinatesX, y : height * 0.1},
+                        {x : coordinatesX, y : height * 0.9}
+                    ]
+                    data.push(arr)
+                }
+                _sort()
+            }
+        }
+        
+        //인원수 변경
+        const participant=(val)=>{
+            value=val.value;
+            $participant.getBoundingClientRect().bottom;
+            if(value=='minus'){
+                if(line =='2'){
+                    alert("참가자는2명이상이여야합니다");
+                    return;
+                }
+                line--;
+                $participant.innerText= line;
+            }else{
+                line++;
+                $participant.innerText= line;
+            }
+        }
+
+        //판 초기화
+        function init(){
+           ctx.save();
+           ctx.clearReact(0,0,width,height);
+           ctx.restore();
+        }
+
+    </script>
+</body>
+</html>

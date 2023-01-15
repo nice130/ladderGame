@@ -308,25 +308,3 @@ function ladder(_id, option = {}){
 
 
 let lad = ladder('canvas')
-
-
-
-// document.getElementById('btn1').addEventListener('click', (event) =>{
-//     lad.find(0, 'red')
-// })
-// document.getElementById('btn2').addEventListener('click', (event) =>{
-//     lad.find(1, 'blue')
-// })   
-// document.getElementById('btn3').addEventListener('click', (event) =>{
-//     lad.find(2, 'green')
-// })  
-// document.getElementById('btn4').addEventListener('click', (event) =>{
-//     lad.find(3, 'purple')
-// })  
-// document.getElementById('btn5').addEventListener('click', (event) =>{
-//     lad.find(4, 'orange')
-// })  
-// lad.calback( (data, lineData)=>{
-//     console.log(data)
-//     console.log(lineData)
-// })
