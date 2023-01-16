@@ -11,7 +11,19 @@
 </head>
 
 <body>
+    <input id="participantNumber"></input>
+    <button onclick="participant(this)">클릭</button>
     <div style="display: inline-block;width: 602px;height: 402px;position: absolute;left: 30%;top:3%;">
+        <h1>사다리타기</h1>
+        <div id="participant"> 
+            <!-- 인원수 설정 -->
+            참가자 수 
+            <button onclick="participant(this)" value="minus">-</button>
+                <!-- 몇명변수추가 -->
+                <span id="participantNumber"></span>
+            <button onclick="participant(this)" value="plus">+</button>
+            <button onclick="start()">게임생성</button>
+        </div>
         <div style="text-align: center;">
             
             <div id="game_range">

@@ -1,12 +1,13 @@
 let Participation;
-function ladder(_id, option = {}){
-    Participation = prompt('참가수를 입력하세요');
-    const canvas = document.getElementById(_id)
+const canvas = document.getElementById('canvas')
     const $game_range = document.getElementById('game_range');
     let ctx = canvas.getContext('2d')
     let width = canvas.width
     let height = canvas.height
-     
+function ladder(_id, option = {}){
+    
+    
+    $game_range.innerHTML =''
     let line = option.line || Participation  //line
 
     let calback //콜백용 변수 입니다
@@ -37,7 +38,7 @@ function ladder(_id, option = {}){
         let startPosX = i / line * width + 1/line * width / 2.6 
         let num = i+1;
         $game_range.innerHTML +='<button class="btn" type="button" style="left:'+startPosX+'px;" id="btn'+num+'">'+num+'번</button>';
-        $game_range.innerHTML +='<div class="prize" id="res_'+i+'" style="left:'+startPosX+'px; top:380px"><div>';
+        $game_range.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+startPosX+'px; top:380px"><div>';
     }
     for(let i=0;i<Participation;i++){
     
@@ -293,6 +294,7 @@ function ladder(_id, option = {}){
         }        
     }      
 
+    
 
     return {
         find : (index, color)=>{
@@ -305,6 +307,11 @@ function ladder(_id, option = {}){
         }
     }         
 }
+function participant(){
+    
+    Participation=document.getElementById("participantNumber").value;
+    console.log(Participation)
+    ladder();
+}
 
-
-let lad = ladder('canvas')
+let lad = ladder()
