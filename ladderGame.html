@@ -43,7 +43,7 @@
         </div>
         <div style="text-align: center;">
             
-            <div id="game_range">
+            <div id="game_field">
                 <!-- 버튼생성 -->
             </div>
         </div>
@@ -55,22 +55,29 @@
         var ctx = canvas.getContext("2d");
         let width = canvas.width
         let height = canvas.height
-        let butHeight = height + (document.querySelector('#app').offsetHeight*0.03);
-        console.log(document.querySelector('#app').offsetHeight*0.03);
+        console.log(canvas.offsetTop+height);
+        let butHeight = canvas.offsetTop+(height*0.9);
+        
         let participantion = 2; //기본 참여인원 
-        let $game_field = document.getElementById("participantNumber")
-        $game_field.innerText= participantion;
+        let $game_field = document.getElementById("game_field")
+        let $participantNumber = document.getElementById("participantNumber")
+        $participantNumber.innerText= participantion;
         let option = {};
-        let line = option.line || participantion  //line ;
+        
         let defaultLineWidth = 3
         let defaultLineColor = '#A6ABCA'
         let data = [ ]
 
-        const start = ()=>{
-            console.log(height);
+        function start(option={}){
+            
+            $game_field.innerHTML=''
+            
+            let line = option.line || participantion  //line ;
+            
             for(let i=0;i<participantion;i++){
-                let coordinatesX = i / line * width + 1/line * width / 2.6 
+                let coordinatesX = i / line * width + 1/line * width / 2.4
                 let num = i+1;
+                console.log(num)
                 $game_field.innerHTML +='<button class="btn" type="button" style="left:'+coordinatesX+'px;" id="btn'+num+'">'+num+'번</button>';
                 $game_field.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+coordinatesX+'px; top:'+butHeight+'px"><div>';
             }
@@ -80,8 +87,8 @@
                     lad.find(i, 'red')
                 });
             }
-            _drawLine();
-            function _drawLine(){
+            lineY();
+            function lineY(){
                 for(let i = 0 ; i < line ; i++){
                     let coordinatesX = i / line * width + 1/line * width / 2
                     ctx.save()
@@ -113,13 +120,42 @@
                     return;
                 }
                 participantion--;
-                $game_field.innerText= participantion;
+                $participantNumber.innerText= participantion;
             }else{
                 participantion++;
-                $game_field.innerText= participantion;
+                $participantNumber.innerText= participantion;
             }
         }
+        function initLad(){
+            function userDrawLine(){
+                for(let i = 0 ; i < line ; i++){
+                    let startPcoordinatesXosX = i / line * width + 1/line * width / 2
+                    ctx.save()
+                    ctx.beginPath()
+                    ctx.lineWidth = defaultLineWidth
+                    ctx.strokeStyle = defaultLineColor
+                    ctx.moveTo(coordinatesX, height * 0.1)
+                    ctx.lineTo(coordinatesX, height * 0.9)
+                    ctx.stroke()
+                    ctx.closePath()
+                    ctx.restore()  
+                }
 
+                lineData.forEach(item => {
+                    let {startBridge, endBridge} = item
+                    ctx.save()
+                    ctx.beginPath()
+                    ctx.lineWidth = defaultLineWidth
+                    ctx.strokeStyle = defaultLineColor
+                    ctx.moveTo(startBridge.x, startBridge.y)
+                    ctx.lineTo(endBridge.x, endBridge.y)
+                    ctx.stroke()
+                    ctx.closePath()
+                    ctx.restore()              
+                })
+                arraySort()
+            }
+        }
         //내림차순으로 정렬
         function arraySort(){
             data.map( arg=>{
@@ -134,7 +170,7 @@
            ctx.clearReact(0,0,width,height);
            ctx.restore();
         }
-
+        let initLadder = initLad();
     </script>
 </body>
 </html>
