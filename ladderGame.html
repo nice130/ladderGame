@@ -10,26 +10,6 @@
     </style>
 </head>
 <body>
-    <!-- <div id="app">
-        <h1>사다리타기</h1>
-        <div id="participant"> 
-            
-            참가자 수 
-            <button onclick="participant(this)" value="minus">-</button>
-               
-                <span id="participantNumber"></span>
-            <button onclick="participant(this)" value="plus">+</button>
-            <button onclick="start()">게임생성</button>
-        </div>
-        
-        <div>
-            <div id="game_field" style="text-align: center;">
-              
-            </div>
-            <canvas class="canvas" id="canvas">
-            </canvas>
-        </div>
-    </div> -->
     <div id="app">
         <h1>사다리타기</h1>
         <div id="participant"> 
@@ -53,44 +33,55 @@
     <script>
         var canvas = document.getElementById("canvas"); 
         var ctx = canvas.getContext("2d");
-        let width = canvas.width
-        let height = canvas.height
-        console.log(canvas.offsetTop+height);
+        let width = canvas.width;
+        let height = canvas.height;
+
+        let lineData = [];
         let butHeight = canvas.offsetTop+(height*0.9);
-        
+        let lineCount = 1;
+        let hoverPosition = {}    
+        let startBridge = null
+
         let participantion = 2; //기본 참여인원 
-        let $game_field = document.getElementById("game_field")
-        let $participantNumber = document.getElementById("participantNumber")
+        let $game_field = document.getElementById("game_field");
+        let $participantNumber = document.getElementById("participantNumber");
         $participantNumber.innerText= participantion;
         let option = {};
+        let clicked =false;
         
-        let defaultLineWidth = 3
-        let defaultLineColor = '#A6ABCA'
-        let data = [ ]
+        let defaultLineWidth = 2;
+        let defaultLineColor = '#A6ABCA';
 
-        function start(option={}){
-            
+        let bk = 1   //혹시모를 무한재귀 대비 브레이킹 인덱스
+        let historyIndex = []  // 이미 지나온 구간은 안가기 위해
+        let calback
+
+        let data = [];
+        let line = option.line || participantion; //line ;
+
+        function start(option={}){    
             $game_field.innerHTML=''
-            
-            let line = option.line || participantion  //line ;
-            
+            init();
+            data = [];
+            lineData=[];
+            line = option.line || participantion;
             for(let i=0;i<participantion;i++){
-                let coordinatesX = i / line * width + 1/line * width / 2.4
+                let coordinatesX = i / participantion * width + 1/participantion * width / 2.4
                 let num = i+1;
-                console.log(num)
                 $game_field.innerHTML +='<button class="btn" type="button" style="left:'+coordinatesX+'px;" id="btn'+num+'">'+num+'번</button>';
                 $game_field.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+coordinatesX+'px; top:'+butHeight+'px"><div>';
             }
             for(let i=0;i<participantion;i++){
                 let id = 'btn' + (i+1);
                 document.getElementById(id).addEventListener('click', (event) =>{
-                    lad.find(i, 'red')
+                    ladderRe.find(i, 'red')
                 });
             }
             lineY();
-            function lineY(){
-                for(let i = 0 ; i < line ; i++){
-                    let coordinatesX = i / line * width + 1/line * width / 2
+            //처음새로줄 그림
+            function lineY(){ 
+                for(let i = 0 ; i < participantion ; i++){
+                    let coordinatesX = i / participantion * width + 1/participantion * width / 2
                     ctx.save()
                     ctx.beginPath()
                     ctx.lineWidth = defaultLineWidth
@@ -126,35 +117,198 @@
                 $participantNumber.innerText= participantion;
             }
         }
-        function initLad(){
-            function userDrawLine(){
-                for(let i = 0 ; i < line ; i++){
-                    let startPcoordinatesXosX = i / line * width + 1/line * width / 2
-                    ctx.save()
-                    ctx.beginPath()
-                    ctx.lineWidth = defaultLineWidth
-                    ctx.strokeStyle = defaultLineColor
-                    ctx.moveTo(coordinatesX, height * 0.1)
-                    ctx.lineTo(coordinatesX, height * 0.9)
-                    ctx.stroke()
-                    ctx.closePath()
-                    ctx.restore()  
+
+        function userDrawLine(){
+            for(let i = 0 ; i < participantion ; i++){
+                let coordinatesX = i / line * width + 1/line * width / 2
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineWidth = defaultLineWidth
+                ctx.strokeStyle = defaultLineColor
+                ctx.moveTo(coordinatesX, height * 0.1)
+                ctx.lineTo(coordinatesX, height * 0.9)
+                ctx.stroke()
+                ctx.closePath()
+                ctx.restore()  
+            }
+            lineData.forEach(item => {
+                let {startBridge, endBridge} = item
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineWidth = defaultLineWidth
+                ctx.strokeStyle = defaultLineColor
+                ctx.moveTo(startBridge.x, startBridge.y)
+                ctx.lineTo(endBridge.x, endBridge.y)
+                ctx.stroke()
+                ctx.closePath()
+                ctx.restore()              
+            })
+            arraySort()
+        }
+        canvas.addEventListener('mousedown', (event) =>{
+            if(!ctx) return
+            clicked = true
+            let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+            let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop
+
+            if(clicked){
+                let startTarget = _isInSide(x1,y1)  //시작점을 기록 합니다
+                startBridge = {...startTarget, x: startTarget.object.x, y: y1, originX:x1, originY : y1}  //x축은 그려진 선 기준값을 대입 합니다
+            }        
+        })
+
+        canvas.addEventListener('mouseup', (event) =>{
+            if(!ctx) return
+            hoverPosition = {}
+            if(clicked){  //마우스가 다운된 상태의 조건이 충족하면,
+                let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+                let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
+                let endBridge =  _isInSide(x1,y1)  //가장 마지막의 선 지점값을 가져 옵니다
+                endBridge = {...endBridge, x: endBridge.object.x, y: y1}  //x축은 그려진 선 기준값을 대입 합니다
+
+                //같은 선분 또는 옆 영역을 뛰어넘어가는 경우 등록하지 않습니다
+                if(startBridge.dataIndex == endBridge.dataIndex || Math.abs(startBridge.dataIndex - endBridge.dataIndex) > 1) {
+                    clicked = false
+                    hoverPosition = {}
+                    startBridge = null
+                    init()
+                    userDrawLine()
+                    return
                 }
 
-                lineData.forEach(item => {
-                    let {startBridge, endBridge} = item
-                    ctx.save()
-                    ctx.beginPath()
-                    ctx.lineWidth = defaultLineWidth
-                    ctx.strokeStyle = defaultLineColor
-                    ctx.moveTo(startBridge.x, startBridge.y)
-                    ctx.lineTo(endBridge.x, endBridge.y)
-                    ctx.stroke()
-                    ctx.closePath()
-                    ctx.restore()              
-                })
-                arraySort()
+                //첫 마우스 다운 지점에서 마지막 마우스 업 지점까지의 거리를 lineData 배열에 담아둡니다
+                let bridgeIdx = _makeid(50);
+                startBridge.linkIdx = bridgeIdx
+                endBridge.linkIdx = bridgeIdx
+                data[startBridge.dataIndex].push(startBridge)  //데이터 배열에도 넣습니다
+                data[endBridge.dataIndex].push(endBridge)
+                lineData.push({startBridge, endBridge})
+                init()
+                userDrawLine()
+                lineCount++;
             }
+            clicked = false
+        })
+
+        //클릭시 가장가까운  line 찾음
+        function _isInSide(x1,y1){
+            let obj = {}
+            let len = width * 3
+            let targetIndex
+            data.forEach( (element, i) =>{
+                element.forEach(item => {
+                    let start_x = item.x
+                    let start_y = item.y
+                    let x = start_x - x1
+                    let y = start_y - y1
+                    let my_len = Math.sqrt(Math.abs(x * x) + Math.abs(y * y))  //가장 짧은 구간을 찾습니다
+                    if(my_len < len){
+                        len = my_len
+                        obj = item
+                        targetIndex = i
+                    }
+                })
+            })
+            return {object : obj, dataIndex : targetIndex}
+        }
+        
+        function _makeid(length) {
+            let result           = ''
+            let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+            let charactersLength = characters.length
+            for ( let i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength))
+            }
+            return result
+        }
+
+        canvas.addEventListener('mousemove', (event) =>{
+            if(!ctx) return
+            if(clicked){
+                let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+                let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
+                init()
+                userDrawLine()
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineCap = 'round'   
+                ctx.lineJoin = 'round'
+                ctx.lineWidth = 4.25
+                ctx.strokeStyle = 'black'
+                ctx.moveTo(startBridge.originX, startBridge.originY)
+                ctx.lineTo(x1, y1)
+                ctx.stroke()
+                ctx.closePath()
+                ctx.restore()              
+            }
+        })
+
+        
+
+        function gotoDestination(iiddxx, color){
+        
+            let mainCursor = iiddxx || 0 //몇번째 사다리인지 확인
+            let innerCursor = 0
+            let stop = true
+            historyIndex = []
+            
+            init()
+            userDrawLine()        
+
+            while(stop){
+                if(bk >= 1433) {  //혹시모를 무한재귀 대비 브레이킹 구간 입니다
+                    stop = false
+                }
+                
+                let start = data[mainCursor][innerCursor]
+                let end
+                if(start.linkIdx != null && historyIndex.filter( arg=> arg == start.linkIdx) == 0){ //링크가 있는 지점
+                    //data에서 찾자
+                    let search= searchLine(mainCursor, start.linkIdx)   //linkData, idx
+                    end = search.linkData
+                    mainCursor= search.idx
+                    innerCursor = search.innIdx
+                    historyIndex.push(start.linkIdx)
+                } else if(data[mainCursor].length <= innerCursor){ //끝지점
+                    debugger;
+                    stop = false
+                } else { //링크가 없는지점
+                    end = data[mainCursor][innerCursor+1]
+                    innerCursor += 1
+                }
+
+                if(!end) break  //데이터가 없는 마지막 구간이면 종료 합니다
+
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineCap = 'round'   
+                ctx.lineJoin = 'round'
+                ctx.lineWidth = 6
+                ctx.strokeStyle = color || 'red'
+                ctx.moveTo(start.x, start.y)
+                ctx.lineTo(end.x, end.y)
+                ctx.stroke()
+                ctx.closePath()
+                ctx.restore()  
+                bk+=1
+            }
+            bk = 0
+            if(calback){
+                calback(data, lineData)
+            }        
+        }
+        
+        function ladderResult(){
+            return {
+                find : (index, color)=>{
+                    gotoDestination(index, color)
+                },
+                calback : (arg)=>{
+                    if(arg && arg  instanceof Function){
+                        calback = arg
+                    }
+                }
+            }  
         }
         //내림차순으로 정렬
         function arraySort(){
@@ -164,13 +318,31 @@
             })
         }
 
+        function searchLine(me, linkIndex){  
+            let linkData
+            let idx
+            let innIdx
+            data.forEach( (arg, _idx) => {
+                if(me != _idx){
+                    arg.forEach((element, _innIdx) => {
+                        if(element.linkIdx == linkIndex){
+                            linkData = element
+                            idx = _idx
+                            innIdx = _innIdx
+                        }
+                    })
+                }
+            })
+            return {linkData, idx, innIdx}
+        }
+
         //판 초기화
         function init(){
            ctx.save();
-           ctx.clearReact(0,0,width,height);
+           ctx.clearRect(0,0,width,height);
            ctx.restore();
         }
-        let initLadder = initLad();
+        let ladderRe = ladderResult();
     </script>
 </body>
 </html>
