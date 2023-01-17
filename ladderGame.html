@@ -22,7 +22,6 @@
             <button onclick="start()">게임생성</button>
         </div>
         <div style="text-align: center;">
-            
             <div id="game_field">
                 <!-- 버튼생성 -->
             </div>
@@ -148,9 +147,9 @@
         canvas.addEventListener('mousedown', (event) =>{
             if(!ctx) return
             clicked = true
-            let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
-            let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop
-
+            let x1 = event.clientX || canvas.offsetLeft
+            let y1 = event.clientY || canvas.offsetTop
+            console.log('downX==>'+event.clientX+'    downY===>'+y1)
             if(clicked){
                 let startTarget = _isInSide(x1,y1)  //시작점을 기록 합니다
                 startBridge = {...startTarget, x: startTarget.object.x, y: y1, originX:x1, originY : y1}  //x축은 그려진 선 기준값을 대입 합니다
@@ -165,7 +164,7 @@
                 let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
                 let endBridge =  _isInSide(x1,y1)  //가장 마지막의 선 지점값을 가져 옵니다
                 endBridge = {...endBridge, x: endBridge.object.x, y: y1}  //x축은 그려진 선 기준값을 대입 합니다
-
+                console.log('upX==>'+x1+'    upX===>'+y1)
                 //같은 선분 또는 옆 영역을 뛰어넘어가는 경우 등록하지 않습니다
                 if(startBridge.dataIndex == endBridge.dataIndex || Math.abs(startBridge.dataIndex - endBridge.dataIndex) > 1) {
                     clicked = false
@@ -227,6 +226,7 @@
             if(clicked){
                 let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
                 let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
+                console.log('x=>'+x1+'   y=>'+y1)
                 init()
                 userDrawLine()
                 ctx.save()
@@ -270,7 +270,6 @@
                     innerCursor = search.innIdx
                     historyIndex.push(start.linkIdx)
                 } else if(data[mainCursor].length <= innerCursor){ //끝지점
-                    debugger;
                     stop = false
                 } else { //링크가 없는지점
                     end = data[mainCursor][innerCursor+1]
