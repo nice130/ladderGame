@@ -1,14 +1,3 @@
-.btn {
-  background: #000;
-  color: #fff;
-  line-height: 42px;
-  padding: 0;
-  border: none;
-  height: 40px;
-  width: 50px;
-  position : absolute;
-}
-
 #app{
   text-align: center;
   position: absolute;
@@ -18,6 +7,18 @@
   position: absolute;
   left: 30%;
   top:3%;
+}
+
+.btn {
+  background:  #fff;
+  line-height: 42px;
+  padding: 0;
+  border: 1px solid #ddd;
+  height: 40px;
+  width: 50px;
+  position : absolute;
+  border-radius: 50px;
+  transition: all 300ms;
 }
 
 .btn1 {
