@@ -15,11 +15,11 @@
         <div id="participant"> 
             <!-- 인원수 설정 -->
             참가자 수 
-            <button onclick="participant(this)" value="minus">-</button>
+            <button class="btn1" onclick="participant(this)" value="minus">-</button>
                 <!-- 몇명변수추가 -->
                 <span id="participantNumber"></span>
-            <button onclick="participant(this)" value="plus">+</button>
-            <button onclick="start()">게임생성</button>
+            <button class="btn1" onclick="participant(this)" value="plus">+</button>
+            <button class="btn1" onclick="start()">게임생성</button>
         </div>
         <div style="text-align: center;">
             <div id="game_field">
@@ -40,6 +40,7 @@
         let lineCount = 1;
         let hoverPosition = {}    
         let startBridge = null
+        let lineMargin= canvas.offsetTop+document.getElementById("app").offsetHeight*0.03;
 
         let participantion = 2; //기본 참여인원 
         let $game_field = document.getElementById("game_field");
@@ -58,6 +59,7 @@
         let data = [];
         let line = option.line || participantion; //line ;
 
+        var x = 0;
         function start(option={}){    
             $game_field.innerHTML=''
             init();
@@ -147,9 +149,8 @@
         canvas.addEventListener('mousedown', (event) =>{
             if(!ctx) return
             clicked = true
-            let x1 = event.clientX || canvas.offsetLeft
-            let y1 = event.clientY || canvas.offsetTop
-            console.log('downX==>'+event.clientX+'    downY===>'+y1)
+            let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+            let y1 = event.clientY - lineMargin || canvas.offsetTop
             if(clicked){
                 let startTarget = _isInSide(x1,y1)  //시작점을 기록 합니다
                 startBridge = {...startTarget, x: startTarget.object.x, y: y1, originX:x1, originY : y1}  //x축은 그려진 선 기준값을 대입 합니다
@@ -161,10 +162,9 @@
             hoverPosition = {}
             if(clicked){  //마우스가 다운된 상태의 조건이 충족하면,
                 let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
-                let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
+                let y1 = event.clientY - lineMargin || canvas.offsetTop            
                 let endBridge =  _isInSide(x1,y1)  //가장 마지막의 선 지점값을 가져 옵니다
                 endBridge = {...endBridge, x: endBridge.object.x, y: y1}  //x축은 그려진 선 기준값을 대입 합니다
-                console.log('upX==>'+x1+'    upX===>'+y1)
                 //같은 선분 또는 옆 영역을 뛰어넘어가는 경우 등록하지 않습니다
                 if(startBridge.dataIndex == endBridge.dataIndex || Math.abs(startBridge.dataIndex - endBridge.dataIndex) > 1) {
                     clicked = false
@@ -225,8 +225,7 @@
             if(!ctx) return
             if(clicked){
                 let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
-                let y1 = event.clientY - canvas.parentElement.offsetTop || canvas.offsetTop            
-                console.log('x=>'+x1+'   y=>'+y1)
+                let y1 = event.clientY - lineMargin || canvas.offsetTop            
                 init()
                 userDrawLine()
                 ctx.save()
@@ -278,6 +277,9 @@
 
                 if(!end) break  //데이터가 없는 마지막 구간이면 종료 합니다
 
+                setTimeout(function(){
+
+                }, 1000)
                 ctx.save()
                 ctx.beginPath()
                 ctx.lineCap = 'round'   
