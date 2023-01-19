@@ -60,7 +60,9 @@
         let line = option.line || participantion; //line ;
         let particiArr = [];
         var x = 0;
-        function start(option={}){    
+        function start(option={}){   
+            let random= 0; 
+            particiArr = []
             $game_field.innerHTML=''
             init();
             data = [];
@@ -69,16 +71,16 @@
             for(let i=0 ;i<participantion;i++){
                 particiArr[i] = i+1
             }
-            const random = Math.floor(Math.random()*particiArr.length);
+            random = Math.floor(Math.random()*particiArr.length);
             for(let i=0;i<participantion;i++){
                 let coordinatesX = (i / participantion * width + 1/participantion * width / 2)-25
                 let num = i+1;
                 $game_field.innerHTML +='<button class="btn" type="button" style="left:'+coordinatesX+'px;" id="btn'+num+'">'+num+'번</button>';
                 if(random==i){
                     $game_field.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+coordinatesX+'px;color:red ;top:'+butHeight+'px">당첨<div>';
-                    $game_field.innerHTML +='<div class="btn" id="res" style="left:'+coordinatesX+'px; top:'+butHeight+'px">X<div>';
+                    $game_field.innerHTML +='<div class="btn" id="res" style="left:'+coordinatesX+'px; top:'+butHeight+'px">X</div>';
                 }else{
-                    $game_field.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+coordinatesX+'px; top:'+butHeight+'px">X<div>';
+                    $game_field.innerHTML +='<div class="btn" id="res_'+i+'" style="left:'+coordinatesX+'px; top:'+butHeight+'px">X</div>';
                 }
                 
             }
@@ -260,7 +262,6 @@
             let innerCursor = 0
             let stop = true
             historyIndex = []
-            document.getElementById("res").style.display = "none";
             init()
             userDrawLine()        
             while(stop){
@@ -286,9 +287,6 @@
 
                 if(!end) break  //데이터가 없는 마지막 구간이면 종료 합니다
 
-                setTimeout(function(){
-
-                }, 1000)
                 ctx.save()
                 ctx.beginPath()
                 ctx.lineCap = 'round'   
@@ -302,6 +300,7 @@
                 ctx.restore()  
                 bk+=1
             }
+            document.getElementById("res").style.display = "none";
             bk = 0
             if(calback){
                 calback(data, lineData)
