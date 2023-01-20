@@ -299,6 +299,7 @@
 
         canvas.addEventListener('touchmove', (event) =>{
             if(!ctx) return
+            BodyScrollDisAble();
             if(clicked){
                 let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
                 let y1 = event.clientY - lineMargin || canvas.offsetTop            
