@@ -169,7 +169,50 @@
             }        
         })
 
+        canvas.addEventListener('touchstart', (event) =>{
+            if(!ctx) return
+            clicked = true
+            let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+            let y1 = event.clientY - lineMargin || canvas.offsetTop
+            if(clicked){
+                let startTarget = _isInSide(x1,y1)  //시작점을 기록 합니다
+                startBridge = {...startTarget, x: startTarget.object.x, y: y1, originX:x1, originY : y1}  //x축은 그려진 선 기준값을 대입 합니다
+            }        
+        })
+
         canvas.addEventListener('mouseup', (event) =>{
+            if(!ctx) return
+            hoverPosition = {}
+            if(clicked){  //마우스가 다운된 상태의 조건이 충족하면,
+                let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+                let y1 = event.clientY - lineMargin || canvas.offsetTop            
+                let endBridge =  _isInSide(x1,y1)  //가장 마지막의 선 지점값을 가져 옵니다
+                endBridge = {...endBridge, x: endBridge.object.x, y: y1}  //x축은 그려진 선 기준값을 대입 합니다
+                //같은 선분 또는 옆 영역을 뛰어넘어가는 경우 등록하지 않습니다
+                if(startBridge.dataIndex == endBridge.dataIndex || Math.abs(startBridge.dataIndex - endBridge.dataIndex) > 1) {
+                    clicked = false
+                    hoverPosition = {}
+                    startBridge = null
+                    init()
+                    userDrawLine()
+                    return
+                }
+
+                //첫 마우스 다운 지점에서 마지막 마우스 업 지점까지의 거리를 lineData 배열에 담아둡니다
+                let bridgeIdx = _makeid(50);
+                startBridge.linkIdx = bridgeIdx
+                endBridge.linkIdx = bridgeIdx
+                data[startBridge.dataIndex].push(startBridge)  //데이터 배열에도 넣습니다
+                data[endBridge.dataIndex].push(endBridge)
+                lineData.push({startBridge, endBridge})
+                init()
+                userDrawLine()
+                lineCount++;
+            }
+            clicked = false
+        })
+
+        canvas.addEventListener('touchend', (event) =>{
             if(!ctx) return
             hoverPosition = {}
             if(clicked){  //마우스가 다운된 상태의 조건이 충족하면,
@@ -254,7 +297,26 @@
             }
         })
 
-        
+        canvas.addEventListener('touchmove', (event) =>{
+            if(!ctx) return
+            if(clicked){
+                let x1 = event.clientX - canvas.parentElement.offsetLeft || canvas.offsetLeft
+                let y1 = event.clientY - lineMargin || canvas.offsetTop            
+                init()
+                userDrawLine()
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineCap = 'round'   
+                ctx.lineJoin = 'round'
+                ctx.lineWidth = 4.25
+                ctx.strokeStyle = defaultLineColor
+                ctx.moveTo(startBridge.originX, startBridge.originY)
+                ctx.lineTo(x1, y1)
+                ctx.stroke()
+                ctx.closePath()
+                ctx.restore()              
+            }
+        })
 
         function gotoDestination(iiddxx, color){
         
