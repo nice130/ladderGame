@@ -21,7 +21,7 @@
   transition: all 300ms;
 }
 
-.btn1 {
+.btn_particiNumber {
   margin: 5px;
   border: 1px solid #ddd;
   background: #fff;
@@ -33,7 +33,7 @@
 }
 
 
-.btn1:hover:not(:disabled) { 
+.btn_particiNumber:hover:not(:disabled) { 
   color: #2980B9;
   border-color: #2980B9;
   cursor: pointer;
